@@ -31,16 +31,18 @@ dashboardPage(
                tabPanel("Dashboard",
                         column(width = 12,align = "center",
                                h3("Upload File"),
-                               fluidRow(fileInput("id2", "",accept = ".xlsm")
+                               fluidRow(fileInput("id2", "Upload data (Max 20Mb)",accept = ".xlsm")
                                ),
                                br(),
                                sidebarLayout(
                                  sidebarPanel(
-                                   dateRangeInput("dateinput","Date"),
+                                   dateRangeInput("dateinput","Action Date"),
                                    selectInput("division","Division",NA),
-                                   selectInput("type","Complaint type",NA),
-                                   selectInput("concern_division","Concern Division",NA),
-                                   selectInput("reason","Reason",NA)
+                                   pickerInput("type","Complaint type",NA,multiple = TRUE),
+                                   pickerInput("concern_division","Concern Division",NA,multiple = TRUE),
+                                   pickerInput("reason","Reason",NA,multiple = TRUE),
+                                   actionButton("action1","Run"),
+                                   downloadButton("action2","Download")
                                  ),
                                  mainPanel(column(width = 12,align = "left",
                                                   p("The objective of this application is to generate 7 indicators using the employee's transactions history database in the form of a dashboard. The indicators included in the dashboard are:"),
