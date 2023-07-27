@@ -26,32 +26,9 @@ shinyServer(function(input,output,session){
     updatePickerInput(session, "concern_division","Concerns Division",choices = unique(df$`يخص المركز`[!is.na(df$`يخص المركز`)]),options = list(`actions-box` = T))
     updatePickerInput(session, "reason","Reason",choices = unique(df$`سبب البلاغ`[!is.na(df$`سبب البلاغ`)]),options = list(`actions-box` = T))
     
-    # print(input$id2)
-    # datae <- read_excel(input$id2$datapath,range = "B12:C212")
-    # data2 <- read_excel(input$id2$datapath,range = "XFA12:XFB212")
-    # print(datae)
-    # print(data2)
-    # print(cbind(datae,data2))
-    # df(cbind(datae,data2))
-    # print(names(df()))
+    df(df)
     
-    # output$plot1 <- renderPlotly({
-    #   plot1 <- df() %>%
-    #     filter(!is.na(situation)) %>%
-    #     group_by(situation) %>%
-    #     summarise(count = n()) %>%
-    #     ggplot(aes(x = situation, y = count, fill = situation)) +
-    #     geom_bar(stat = "identity") +
-    #     theme_classic() +
-    #     theme(legend.position = "none", axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1), plot.title = element_text(hjust = 0.5)) +
-    #     ggtitle("Total count of transactions by status") +
-    #     xlab("") +
-    #     ylab("") +
-    #     scale_fill_manual(values = c("#BFBFBF", "#417FA6"))
-    #   # scale_fill_brewer(palette="Dark2")
-    #   ggplotly(plot1,tooltip = c("y")
-    #   )
-    # })
+
     # output$plot2 <- renderPlotly({
     #   plot2 <- df() %>%
     #     filter(!is.na(situation)) %>%
@@ -126,10 +103,110 @@ shinyServer(function(input,output,session){
     #     filter(situation == "finished") %>%
     #     group_by(`type of process`) %>%
     #     summarise(count = n())
-    #   
+    # 
     #   boxC <- boxC[boxC$count == max(boxC$count),"type of process"]
-    #   
+    # 
     #   valueBox(boxC$`type of process`,"Most finished transaction type")
     # })
+    
+    
   })
+  
+  observeEvent(input$action1,{
+    
+    print(input$dateinput)
+    
+    df <- df() %>%
+      filter(ActionDate >= min(input$dateinput) & ActionDate <= max(input$dateinput) &
+               Division == input$division &
+               `نوع الشكوى` %in% input$type &
+               `يخص المركز` %in% input$concern_division &
+               `سبب البلاغ` %in% input$reason
+               )
+
+    output$box1 <- renderValueBox({
+      boxA = df %>%
+        summarise(count = n_distinct(TicketNumber)
+        )
+      valueBox(boxA$count,"عدد البلاغات الكلي")
+    })
+    
+    output$box2 <- renderValueBox({
+      boxA = df %>%
+        filter(`نوع الشكوى` == "ذات أثر طبي") %>%
+        summarise(count = n_distinct(TicketNumber)
+        )
+      valueBox(boxA$count,"البلاغات ذات أثر طبي")
+    })
+    
+    output$box3 <- renderValueBox({
+      boxA = df %>%
+        filter(`نوع الشكوى` == "ذات أثر غير طبي") %>%
+        summarise(count = n_distinct(TicketNumber)
+        )
+      valueBox(boxA$count,"البلاغات ذات أثر غير طبي")
+    })
+    
+    output$box4 <- renderValueBox({
+      boxA = df %>%
+        summarise(count = n_distinct(`الاجراء`)
+        )
+      valueBox(boxA$count,"عدد الإجراءات")
+    })
+    
+    output$box5 <- renderValueBox({
+      boxA = df %>%
+      filter(!is.na(`حالة الاتصال`)) %>%
+        summarise(count = n_distinct(TicketNumber))
+      valueBox(boxA$count,"عدد محاضر الاتصال")
+    })
+    
+    output$box6 <- renderValueBox({
+      boxA = df %>%
+        filter(!is.na(`الاسم`)) %>%
+        summarise(count = n_distinct(TicketNumber))
+      valueBox(boxA$count,"عدد الجلسات الاسترشادية")
+    })
+    
+    output$plot1 <- renderPlotly({
+      
+      stat_nbr = df %>%
+        summarise(count = n_distinct(TicketNumber))
+      call_nbr = df %>%
+        filter(!is.na(`حالة الاتصال`)) %>%
+        summarise(count = n_distinct(TicketNumber))
+      orient_nbr = df %>%
+        filter(!is.na(`الاسم`)) %>%
+        summarise(count = n_distinct(TicketNumber))
+      
+      call_prct <- as.numeric(call_nbr)/as.numeric(stat_nbr) 
+      orient_prct <- as.numeric(orient_nbr) /as.numeric(stat_nbr) 
+      
+      
+    print(call_prct)
+    print(orient_prct)
+    
+      variable = c("الجلسات الاسترشادية","محاضر الاتصال")
+      pct = c(orient_prct,call_prct)
+      
+      plot1data <- data.frame(variable,pct)
+      
+      print(plot1data)
+      
+      plot1 <- plot1data %>%
+        ggplot(aes(x = variable, y = pct, fill = variable, label = paste0(round(pct*100),"%"))) +
+        geom_bar(stat = "identity") +
+        theme_classic() +
+        theme(legend.position = "none", axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1), plot.title = element_text(hjust = 0.5)) +
+        ggtitle("") +
+        xlab("") +
+        ylab("") +
+        scale_fill_manual(values = c("#BFBFBF", "#417FA6"))
+      # scale_fill_brewer(palette="Dark2")
+      ggplotly(plot1,tooltip = c("label")
+      )
+    })
+    
+  })
+  
 })

@@ -60,14 +60,17 @@ dashboardPage(
                                ),
                                br(),
                                fluidRow(
+                                 column(width = 4, plotlyOutput("plot1")
+                                 ),
                                  column(width = 4,valueBoxOutput("box1", 12),
                                         valueBoxOutput("box2", 12),
                                         valueBoxOutput("box3", 12),
                                         
                                  ),
-                                 column(width = 4, plotlyOutput("plot1")
-                                 ),
-                                 column(width = 4, plotlyOutput("plot2")
+                                 column(width = 4,valueBoxOutput("box4", 12),
+                                        valueBoxOutput("box5", 12),
+                                        valueBoxOutput("box6", 12),
+                                        
                                  )
                                ),
                                fluidRow(
