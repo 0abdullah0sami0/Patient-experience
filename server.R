@@ -27,89 +27,6 @@ shinyServer(function(input,output,session){
     updatePickerInput(session, "reason","Reason",choices = unique(df$`سبب البلاغ`[!is.na(df$`سبب البلاغ`)]),options = list(`actions-box` = T))
     
     df(df)
-    
-
-    # output$plot2 <- renderPlotly({
-    #   plot2 <- df() %>%
-    #     filter(!is.na(situation)) %>%
-    #     group_by(`type of process`,situation) %>%
-    #     summarise(count = n()) %>%
-    #     ggplot(aes(x = `type of process`, y = count, fill = situation)) +
-    #     geom_bar(stat = "identity") +
-    #     ggtitle("Count of each transaction type by status") +
-    #     xlab("") +
-    #     ylab("") +
-    #     theme_classic() +
-    #     theme(legend.position = "none", axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1), plot.title = element_text(hjust = 0.5)) +
-    #     scale_fill_manual(values = c("#BFBFBF", "#417FA6"))
-    #   # scale_fill_brewer(palette="Dark2")
-    #   ggplotly(plot2,tooltip = c("y","fill")
-    #   )
-    # })
-    # output$plot3 <- renderPlotly({
-    #   plot3 <- df() %>%
-    #     filter(situation == "finished") %>%
-    #     mutate(`last process` = as.Date(`last process`,format = "%y-%m-%d"),
-    #            `first process` = as.Date(`first process`,format = "%y-%m-%d"),
-    #            Average = `last process` - `first process`) %>%
-    #     group_by(`type of process`) %>%
-    #     summarise(Average = round(mean(Average))) %>%
-    #     ggplot(aes(x = `type of process`, y = Average, fill = `type of process`)) +
-    #     geom_bar(stat = "identity") +
-    #     ggtitle("Average process time by transaction in days") +
-    #     xlab("") +
-    #     ylab("Days") +
-    #     theme_classic() +
-    #     theme(legend.position = "none", axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1), plot.title = element_text(hjust = 0.5)) +
-    #     scale_fill_manual(values = c("#A2A6F2","#BFBFBF", "#417FA6","#3F89A6","#0D0D0D"))
-    #   ggplotly(plot3,tooltip = c("y")
-    #   )
-    # })
-    # output$plot4 <- renderPlotly({
-    #   plot4 <- df() %>%
-    #     filter(situation == "finished") %>%
-    #     mutate(`last process` = as.Date(`last process`,format = "%y-%m-%d")) %>%
-    #     group_by(`last process`) %>%
-    #     summarise(count = n()) %>%
-    #     ggplot(aes(x = `last process`, y = count)) +
-    #     geom_line(color = "#3F89A6") +
-    #     geom_point() +
-    #     ggtitle("Count of finished transactions by date") +
-    #     xlab("End of transaction") +
-    #     ylab("") +
-    #     theme_classic() +
-    #     theme(legend.position = "none", axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1), plot.title = element_text(hjust = 0.5))
-    #   ggplotly(plot4,tooltip = c("y")
-    #   )
-    # })
-    # output$box1 <- renderValueBox({
-    #   boxA = df() %>%
-    #     filter(!is.na(`type of process`)) %>%
-    #     summarise(count = n()
-    #     )
-    #   valueBox(boxA$count,"Number of transactions")
-    # })
-    # output$box2 <- renderValueBox({
-    #   boxB = df() %>%
-    #     filter(situation == "finished") %>%
-    #     mutate(`last process` = as.Date(`last process`,format = "%y-%m-%d"),
-    #            `first process` = as.Date(`first process`,format = "%y-%m-%d"),
-    #            Average = `last process` - `first process`) %>%
-    #     summarise(Average = round(mean(Average)))
-    #   valueBox(boxB$Average,"Average process time in days")
-    # })
-    # output$box3 <- renderValueBox({
-    #   boxC = df() %>%
-    #     filter(situation == "finished") %>%
-    #     group_by(`type of process`) %>%
-    #     summarise(count = n())
-    # 
-    #   boxC <- boxC[boxC$count == max(boxC$count),"type of process"]
-    # 
-    #   valueBox(boxC$`type of process`,"Most finished transaction type")
-    # })
-    
-    
   })
   
   observeEvent(input$action1,{
@@ -182,10 +99,6 @@ shinyServer(function(input,output,session){
       call_prct <- as.numeric(call_nbr)/as.numeric(stat_nbr) 
       orient_prct <- as.numeric(orient_nbr) /as.numeric(stat_nbr) 
       
-      
-    print(call_prct)
-    print(orient_prct)
-    
       variable = c("الجلسات الاسترشادية","محاضر الاتصال")
       pct = c(orient_prct,call_prct)
       
@@ -194,19 +107,56 @@ shinyServer(function(input,output,session){
       print(plot1data)
       
       plot1 <- plot1data %>%
-        ggplot(aes(x = variable, y = pct, fill = variable, label = paste0(round(pct*100),"%"))) +
+        ggplot(aes(x = variable, y = pct, fill = variable, text = str_glue("{round(pct*100)} %"))) +
         geom_bar(stat = "identity") +
         theme_classic() +
         theme(legend.position = "none", axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1), plot.title = element_text(hjust = 0.5)) +
-        ggtitle("") +
+        ggtitle("نسبة محاضر الاتصال والجلسات الاسترشادية من عدد البلاغات") +
         xlab("") +
         ylab("") +
+        scale_y_continuous(labels = scales::percent) +
         scale_fill_manual(values = c("#BFBFBF", "#417FA6"))
       # scale_fill_brewer(palette="Dark2")
-      ggplotly(plot1,tooltip = c("label")
+      ggplotly(plot1,tooltip = c("text")
       )
     })
     
+    output$plot2 <- renderPlotly({
+        plot3 <- df %>%
+          group_by(`سبب البلاغ`) %>%
+          summarise(count = n()) %>%
+          ggplot(aes(x = `سبب البلاغ`, y = count)) +
+          geom_bar(stat = "identity", fill = "#417FA6") +
+          ggtitle("عدد كل سبب من أسباب البلاغات") +
+          xlab("") +
+          ylab("") +
+          theme_classic() +
+          theme(legend.position = "none", axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1), plot.title = element_text(hjust = 0.5))
+        ggplotly(plot3,tooltip = c("y")
+        )
+    })
+    
+    output$plot3 <- renderPlotly({
+      plot4 <- df %>%
+        filter(!is.na(ActionDate)) %>%
+        group_by(ActionDate) %>%
+        summarise(count = n()) %>%
+        ggplot(aes(x = ActionDate, y = count)) +
+        geom_line(color = "#3F89A6") +
+        geom_point() +
+        ggtitle("عدد البلاغات اليومية") +
+        xlab("") +
+        ylab("") +
+        theme_classic() +
+        theme(legend.position = "none", axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=1), plot.title = element_text(hjust = 0.5))
+      ggplotly(plot4,tooltip = c("y","x")
+      )
+    })
+    
+    output$table <- renderDataTable({
+      df %>%
+        select(Title,`سبب البلاغ`,`الاجراء`,Description)
+    })
   })
   
 })

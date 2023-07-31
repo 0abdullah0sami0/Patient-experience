@@ -74,11 +74,13 @@ dashboardPage(
                                  )
                                ),
                                fluidRow(
-                                 column(width = 6,plotlyOutput("plot3")
+                                 column(width = 6,plotlyOutput("plot2")
                                  ),
-                                 column(width = 6,plotlyOutput("plot4")
+                                 column(width = 6,plotlyOutput("plot3")
                                  )
-                               )
+                               ),
+                               fluidRow(
+                                 column(width = 12,dataTableOutput("table")))
                         )
                )
     )
