@@ -3,9 +3,9 @@ shinyServer(function(input,output,session){
   df <- reactiveVal("AN")
   output$id1 <- downloadHandler(
     filename = function() {
-      paste0("My data ", Sys.Date(), ".xlsm")},
+      paste0("تجربة المريض نطاق الخرج ", Sys.Date(), ".zip")},
     content = function(My_data){
-      file.copy("database.xlsm",My_data)}
+      file.copy("Patient experience.zip",My_data)}
   )
   observeEvent(input$id2,{
     data <- read_excel(input$id2$datapath, sheet = "بلاغات مركز الخالدية") 
@@ -20,11 +20,11 @@ shinyServer(function(input,output,session){
     print(df)
     
     df$ActionDate <- as.Date(df$ActionDate,format = "%yyyy-%m-%d")
-    updateDateRangeInput(session, inputId = "dateinput","Action Date", min = min(df$ActionDate,na.rm = TRUE), max = max(df$ActionDate,na.rm = TRUE))
-    updateSelectInput(session, "division","Division",df$Division[!is.na(df$Division)])
-    updatePickerInput(session, "type","Complaint type",choices = unique(df$`نوع الشكوى`[!is.na(df$`نوع الشكوى`)]),options = list(`actions-box` = T))
-    updatePickerInput(session, "concern_division","Concerns Division",choices = unique(df$`يخص المركز`[!is.na(df$`يخص المركز`)]),options = list(`actions-box` = T))
-    updatePickerInput(session, "reason","Reason",choices = unique(df$`سبب البلاغ`[!is.na(df$`سبب البلاغ`)]),options = list(`actions-box` = T))
+    updateDateRangeInput(session, inputId = "dateinput","التاريخ", min = min(df$ActionDate,na.rm = TRUE),start = min(df$ActionDate,na.rm = TRUE),end = max(df$ActionDate,na.rm = TRUE), max = max(df$ActionDate,na.rm = TRUE))
+    updateSelectInput(session, "division","المركز",df$Division[!is.na(df$Division)])
+    updatePickerInput(session, "type","نوع الشكوى",choices = unique(df$`نوع الشكوى`[!is.na(df$`نوع الشكوى`)]),options = list(`actions-box` = T),selected = unique(df$`نوع الشكوى`[!is.na(df$`نوع الشكوى`)]))
+    updatePickerInput(session, "concern_division","يخص المركز",choices = unique(df$`يخص المركز`[!is.na(df$`يخص المركز`)]),options = list(`actions-box` = T), selected = unique(df$`يخص المركز`[!is.na(df$`يخص المركز`)]))
+    updatePickerInput(session, "reason","سبب البلاغ",choices = unique(df$`سبب البلاغ`[!is.na(df$`سبب البلاغ`)]),options = list(`actions-box` = T), selected = unique(df$`سبب البلاغ`[!is.na(df$`سبب البلاغ`)]))
     
     df(df)
   })

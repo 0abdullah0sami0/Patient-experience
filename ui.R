@@ -7,55 +7,54 @@ dashboardPage(
     setBackgroundColor(color = "#FFFFFF", shinydashboard = FALSE),
     setBackgroundColor(color = "#FFFFFF", shinydashboard = TRUE),
     tags$head(
-      tags$link(rel = "shortcut icon", href = "Good-logo.ico")
+      tags$link(rel = "shortcut icon", href = "logo.ico")
     ),
-    navbarPage(title=img(id="logo", src="Good logo.png", style="width:100%;height:150%"),
+    navbarPage(title=img(id="logo", src="logo.jpeg", style="width:100%;height:150%"),
                theme = shinytheme("lumen"),
-               windowTitle = "Employee report",
+               windowTitle = "إدارة تجربة المريض نطاق الخرج",
                tabPanel("Service description",
                         column(width = 12,align = "center",
-                               h3("Employee report"),
-                               p("This service is a gift from me for employees to help you track your progress in transactions processing in a simple and easy way using 7 indicators. To learn more about this tool, you can check the video below and download the sample data excel file to start using it yourself."),
+                               h3("برنامج إدارة تجربة المريض"),
+                               p("يساعد برنامج إدارة تجربة المريض الموظف على حفظ الملفات بشكل إلكتروني وآمن مع الملئ التلقائي لقاعدة البيانات وتقديم التقارير الاحترافية خلال ثواني"),
                                br(),
-                               fluidRow(downloadButton("id1","Download Excel file")
+                               fluidRow(downloadButton("id1","تحميل البرنامج")
                                ),
                                br(),
                                fluidRow(
                                  column(width = 12,
-                                        embed_url("https://www.youtube.com/watch?v=-IBxIXBaei8") %>%
-                                          use_bs_responsive()
+                                        img(src="image.png", height = 600, width = 1200)
                                  )
                                )
                         )
                ),
                tabPanel("Dashboard",
                         column(width = 12,align = "center",
-                               h3("Upload File"),
-                               fluidRow(fileInput("id2", "Upload data (Max 20Mb)",accept = ".xlsm")
+                               h3("رفع الملف"),
+                               fluidRow(fileInput("id2", "القيمة القصوى للبيانات هو ٢٠ ميجا بايت (ملف اكسل)",accept = ".xlsm")
                                ),
                                br(),
                                sidebarLayout(
                                  sidebarPanel(
-                                   dateRangeInput("dateinput","Action Date"),
-                                   selectInput("division","Division",NA),
-                                   pickerInput("type","Complaint type",NA,multiple = TRUE),
-                                   pickerInput("concern_division","Concern Division",NA,multiple = TRUE),
-                                   pickerInput("reason","Reason",NA,multiple = TRUE),
-                                   actionButton("action1","Run"),
-                                   downloadButton("action2","Download")
+                                   dateRangeInput("dateinput","التاريخ"),
+                                   selectInput("division","المركز",NA),
+                                   pickerInput("type","نوع الشكوى",NA,multiple = TRUE),
+                                   pickerInput("concern_division","يخص المركز",NA,multiple = TRUE),
+                                   pickerInput("reason","سبب البلاغ",NA,multiple = TRUE),
+                                   actionButton("action1","عرض"),
+                                   downloadButton("action2","تحميل")
                                  ),
-                                 mainPanel(column(width = 12,align = "left",
-                                                  p("The objective of this application is to generate 7 indicators using the employee's transactions history database in the form of a dashboard. The indicators included in the dashboard are:"),
-                                                  tags$ol(
-                                                    tags$li("Total number of transactions"),
-                                                    tags$li("Average time period to complete transactions"),
-                                                    tags$li("Most finished transaction type"),
-                                                    tags$li("Total count of transactions by status"),
-                                                    tags$li("Total count of transaction type by status"),
-                                                    tags$li("Average process time period by transaction"),
-                                                    tags$li("Count of finished transactions by date")
-                                                    
-                                                  )
+                                 mainPanel(column(width = 12,align = "right",
+                                                  p("من خلال خمسة فلاتر يمكنك إنشاء تقرير احترافي عن إدارة تجربة المريض في المركز تتضمن العديد من المؤشرات"),
+                                                  # tags$ol(
+                                                  #   tags$li("Total number of transactions"),
+                                                  #   tags$li("Average time period to complete transactions"),
+                                                  #   tags$li("Most finished transaction type"),
+                                                  #   tags$li("Total count of transactions by status"),
+                                                  #   tags$li("Total count of transaction type by status"),
+                                                  #   tags$li("Average process time period by transaction"),
+                                                  #   tags$li("Count of finished transactions by date")
+                                                  #   
+                                                  # )
                                  ))
                                ),
                                br(),
