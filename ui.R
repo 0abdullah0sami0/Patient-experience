@@ -72,6 +72,9 @@ dashboardPage(
                                         
                                  )
                                ),
+                               
+                               # plots
+                               
                                fluidRow(
                                  column(width = 6,plotlyOutput("plot2")
                                  ),
